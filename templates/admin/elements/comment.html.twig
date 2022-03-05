@@ -1,0 +1,18 @@
+<div class="comment comment--level-{{ level }}">
+    <div class="comment__author">{{ comment.author }}</div>
+    <div class="comment__controls">
+        <div class="comment__reply comment__control" data-id="{{ comment.id }}"><?xml version="1.0" encoding="utf-8"?>
+            <svg id="Layer_1" xmlns="http://www.w3.org/2000/svg"
+                 x="0px" y="0px" viewBox="0 0 122.88 98.86" style="enable-background:new 0 0 122.88 98.86"
+                 xml:space="preserve"><g><path fill="#0288d1" class="st0" d="M0,49.43l48.93,49.43V74.23c30.94-6.41,55.39,0.66,73.95,24.19c-3.22-48.4-36.29-71.76-73.95-73.31V0L0,49.43 L0,49.43L0,49.43z"/></g></svg></div>
+        <div class="comment__edit comment__control" data-id="{{ comment.id }}"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><path fill="#0288d1" d="M7.127 22.562l-7.127 1.438 1.438-7.128 5.689 5.69zm1.414-1.414l11.228-11.225-5.69-5.692-11.227 11.227 5.689 5.69zm9.768-21.148l-2.816 2.817 5.691 5.691 2.816-2.819-5.691-5.689z"/></svg></div>
+        <div class="comment__delete comment__control" data-id="{{ comment.id }}"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 352 512"><path fill="#d32f2f" d="M242.72 256l100.07-100.07c12.28-12.28 12.28-32.19 0-44.48l-22.24-22.24c-12.28-12.28-32.19-12.28-44.48 0L176 189.28 75.93 89.21c-12.28-12.28-32.19-12.28-44.48 0L9.21 111.45c-12.28 12.28-12.28 32.19 0 44.48L109.28 256 9.21 356.07c-12.28 12.28-12.28 32.19 0 44.48l22.24 22.24c12.28 12.28 32.2 12.28 44.48 0L176 322.72l100.07 100.07c12.28 12.28 32.2 12.28 44.48 0l22.24-22.24c12.28-12.28 12.28-32.19 0-44.48L242.72 256z"/></svg></div>
+        <div class="comment__control">{{ comment.dateAdd|date('d.m.Y H:i:s') }}</div>
+    </div>
+    <div class="comment__text">{{ comment.text }}</div>
+</div>
+{% if comment.replies is not empty %}
+    {% for comment in comment.replies %}
+        {% include 'admin/elements/comment.html.twig' with {'comment': comment, 'level': level + 1} only %}
+    {% endfor %}
+{% endif %}

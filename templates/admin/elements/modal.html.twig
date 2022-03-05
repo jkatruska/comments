@@ -1,0 +1,118 @@
+<div id="comment-modal" class="modal">
+    <div class="modal-content">
+        <span class="close">&times;</span>
+        <form id="comment-form">
+            <div id="posts-select">
+                <label for="post">Post:</label><br>
+                <select name="slug" id="post">
+                    {% for post in posts %}
+                        <option value="{{ post.slug }}">{{ post.title }}</option>
+                    {% endfor %}
+                </select><br>
+            </div>
+            <label for="author">Author: </label><br>
+            <input type="text" name="author" id="author"><br>
+            <label for="comment">Comment: </label><br>
+            <textarea id="comment" name="text"></textarea><br>
+            <button type="submit" class="button button--outlined">Submit</button>
+        </form>
+        <span class="modal-error"></span>
+    </div>
+</div>
+<script>
+    var parentId = null;
+    var modal = $('#comment-modal');
+    var submitUrl = '';
+    var method = '';
+    function showModal() {
+        modal.show();
+    }
+    function closeModal() {
+        parentId = null;
+        modal.hide();
+    }
+
+    function convertFormToJSON(form) {
+        var array = $(form).serializeArray();
+        var json = {};
+        $.each(array, function () {
+            json[this.name] = this.value || "";
+        });
+        return json;
+    }
+
+    function clearInputs() {
+        $('#author').val('');
+        $('#comment').val('');
+    }
+
+    $('#comment-form').on('submit', function (e) {
+        e.preventDefault();
+        var data =  convertFormToJSON('#comment-form');
+        var request = $.ajax({
+            method: method,
+            contentType: "application/json",
+            url: submitUrl,
+            data: JSON.stringify(data),
+            success: function () {
+                closeModal();
+                parentId = null;
+                window.location.reload();
+            }
+        });
+        request.fail(function (xhr) {
+            var message = xhr.responseJSON.error;
+            if (xhr.status === 429) {
+                message = "Wooah slow down! " + message;
+            }
+            $('.modal-error').html(message);
+        })
+    });
+
+    $('.close').on('click', closeModal);
+
+    $('.comment__reply').on('click', function () {
+        parentId = $(this).data('id');
+        submitUrl = "{{ replyToCommentUrl }}".replace('-id-', parentId);
+        method = 'POST';
+        clearInputs();
+        $('#posts-select').hide();
+        $('#post').attr('disabled', 'disabled');
+        showModal();
+    });
+
+    $('.comment__edit').on('click', function () {
+        var id = $(this).data('id');
+        var author = $(this).parents('.comment').find('.comment__author');
+        var text = $(this).parents('.comment').find('.comment__text');
+        $('#author').val(author.html());
+        $('#comment').val(text.html());
+        submitUrl = "{{ updateCommentUrl }}".replace('-id-', id);
+        $('#posts-select').hide();
+        $('#post').attr('disabled', 'disabled');
+        method = 'PUT';
+        showModal();
+    });
+
+    $('.add-comment').on('click', function() {
+        submitUrl = "{{ addCommentUrl }}";
+        method = 'POST';
+        clearInputs();
+        $('#posts-select').show();
+        $('#post').attr('disabled', false);
+        showModal();
+    });
+
+    $('.comment__delete').on('click', function () {
+        var id = $(this).data('id');
+        var url  = "{{ deleteCommentUrl }}".replace('-id-', id);
+        $.ajax({
+            method: "DELETE",
+            contentType: "application/json",
+            url: url,
+            success: function () {
+                window.location.reload();
+            }
+        })
+    });
+</script>

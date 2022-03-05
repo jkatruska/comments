@@ -1,0 +1,187 @@
+* {
+  margin: 0;
+  padding: 0;
+  font-family: 'Roboto', sans-serif;
+}
+
+body {
+  background: #F8F9FA;
+}
+
+$primary-color: #0288d1;
+$secondary-color: #d32f2f;
+$gray: #9e9e9e;
+$levels: 5;
+
+a {
+  text-decoration: none;
+  color: $primary-color;
+}
+a:hover {
+  text-decoration: underline;
+}
+#content {
+  width: 75%;
+  margin:0 auto;
+}
+h2 {
+  margin-top: 40px;
+  color: $primary-color;
+}
+.post {
+  border-bottom: 1px solid $primary-color;
+  padding: 10px 0;
+  &:first-of-type {
+    margin-top: 30px;
+  }
+  &__read-more {
+    text-align: right;
+  }
+  &__title {
+    font-weight: bold;
+    font-size: 20px;
+    margin-bottom: 10px;
+  }
+}
+
+.post-detail {
+  &__title {
+    color: $primary-color;
+    margin-top: 30px;
+    font-weight: bold;
+    font-size: 28px;
+  }
+  &__perex, &__text {
+    margin-top: 10px;
+    text-align: justify;
+  }
+}
+.comment {
+  margin-top: 10px;
+  background: white;
+  padding: 10px;
+  border-radius: 5px;
+  box-shadow: 0 0 3px #b3b3b3;
+  &__author, &__controls {
+    display: inline-block;
+    width: 49.5%;
+    color: $gray;
+  }
+  &__controls {
+    text-align: right;
+  }
+  &__text {
+    margin-top: 10px;
+  }
+  &__control {
+    display: inline-block;
+    padding-right: 10px;
+  }
+  &__control svg {
+    width: 20px;
+    height: 20px;
+    cursor: pointer;
+  }
+  @for $i from 0 through $levels {
+    &--level-#{$i} {
+      padding-left: 20px * $i;
+    }
+  }
+}
+
+.clear {
+  clear: both;
+}
+.add-comment {
+  float: right;
+  margin: 20px 0;
+}
+.button {
+  padding: 10px;
+  display: inline-block;
+  cursor: pointer;
+  &--outlined {
+    border: 1px solid $primary-color;
+    color: $primary-color;
+    border-radius: 5px;
+  }
+}
+
+.modal {
+  display: none;
+  position: fixed;
+  z-index: 1;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  background-color: rgba(0,0,0,0.4);
+}
+.modal-content {
+  width: 300px;
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%) translateY(-50%);
+  top: 50%;
+  background: white;
+  border-radius: 5px;
+  padding: 20px;
+  .close {
+    position: absolute;
+    right: -10px;
+    top: -10px;
+    background: $secondary-color;
+    padding: 9px;
+    border-radius: 50%;
+    width: 20px;
+    height: 20px;
+    text-align: center;
+    color: white;
+    font-weight: bold;
+    font-size: 20px;
+    cursor: pointer;
+  }
+  .modal-error {
+    color: $secondary-color;
+  }
+}
+
+input, textarea {
+  border: none;
+  border-bottom: 2px solid $gray;
+  width: 95%;
+  outline: none;
+  resize: none;
+  margin: 10px 0;
+  font-size: 16px;
+  &:active, &:focus {
+    border-bottom: 2px solid $primary-color;
+  }
+}
+.error {
+  color: $secondary-color;
+}
+
+//admin
+.login {
+  width: 30%;
+  margin: 25% auto 0 auto;
+}
+
+.header {
+  height: 45px;
+  overflow: hidden;
+  margin: 10px 0;
+  .logout {
+    width: 35px;
+    height: 35px;
+    float: right;
+  }
+}
+.post-name {
+  margin: 10px 0;
+}
+select#post{
+  width: 95%;
+}

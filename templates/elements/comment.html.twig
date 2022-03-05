@@ -1,0 +1,16 @@
+<div class="comment comment--level-{{ level }}">
+    <div class="comment__author">{{ comment.author }}</div>
+    <div class="comment__controls">
+        <div class="comment__reply comment__control" data-id="{{ comment.id }}"><?xml version="1.0" encoding="utf-8"?>
+            <svg id="Layer_1" xmlns="http://www.w3.org/2000/svg"
+                 x="0px" y="0px" viewBox="0 0 122.88 98.86" style="enable-background:new 0 0 122.88 98.86"
+                 xml:space="preserve"><g><path fill="#0288d1" class="st0" d="M0,49.43l48.93,49.43V74.23c30.94-6.41,55.39,0.66,73.95,24.19c-3.22-48.4-36.29-71.76-73.95-73.31V0L0,49.43 L0,49.43L0,49.43z"/></g></svg></div>
+        <div class="comment__control">{{ comment.dateAdd|date('d.m.Y H:i:s') }}</div>
+    </div>
+    <div class="comment__text">{{ comment.text }}</div>
+</div>
+{% if comment.replies is not empty %}
+    {% for comment in comment.replies %}
+        {% include '/elements/comment.html.twig' with {'comment': comment, 'level': level + 1} only %}
+    {% endfor %}
+{% endif %}

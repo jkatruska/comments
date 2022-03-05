@@ -1,0 +1,12 @@
+{% extends 'base.html.twig' %}
+{% block title %}Posts{% endblock %}
+{% block body %}
+    <h2> Welcome to this awesome page here is list of posts: </h2>
+    {% if posts is empty %}
+        <div class="no-posts">We don't have any posts yet, sorry.</div>
+    {% else %}
+        {% for post in posts %}
+            {% include 'elements/post.html.twig' with {'post': post} only %}
+        {% endfor %}
+    {% endif %}
+{% endblock %}

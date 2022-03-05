@@ -1,0 +1,19 @@
+{% extends 'base.html.twig' %}
+
+{% block body %}
+    <div class="login">
+        <form action="{{ path('admin_login') }}" method="post" class="login_form">
+            <label for="username">Username:</label><br>
+            <input type="text" id="username" name="_username" value="{{ last_username }}"/><br>
+            <label for="password">Password:</label><br>
+            <input type="password" id="password" name="_password"/><br>
+
+            <input type="hidden" name="_target_path" value="{{ path('admin_comments') }}"/>
+            <input type="hidden" name="_csrf_token" value="{{ csrf_token('authenticate') }}">
+            <button type="submit" class="button--outlined button">Login</button>
+        </form>
+        {% if error %}
+            <div class="error">{{ error.messageKey|trans(error.messageData, 'security') }}</div>
+        {% endif %}
+    </div>
+{% endblock %}

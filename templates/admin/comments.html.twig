@@ -1,0 +1,20 @@
+{% extends 'admin/admin_ui.html.twig' %}
+{% block body %}
+    {% set lastPostTitle = '' %}
+    {{ parent() }}
+    <div class="add-comment button button--outlined">Add comment</div>
+    <div class="clear"></div>
+    {% if comments is not empty %}
+        {% for comment in comments %}
+            {% set title = posts|filter((post) => post.id == comment.postId)|first.title %}
+            {% if lastPostTitle != title %}
+                <h3 class="post-name">{{ title }}</h3>
+                {% set lastPostTitle = title %}
+            {% endif %}
+            {% include 'admin/elements/comment.html.twig' with {'comment': comment, 'level': 1} only %}
+        {% endfor %}
+    {% else %}
+        <div class="no-comments">There are no comments yet, please add one.</div>
+    {% endif %}
+    {% include 'admin/elements/modal.html.twig' %}
+{% endblock %}

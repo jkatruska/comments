@@ -1,0 +1,93 @@
+{% extends 'base.html.twig' %}
+{% block title %}{{ post.title }}{% endblock %}
+{% block body %}
+    <div class="post-detail">
+        <div class="post-detail__title">{{ post.title }}</div>
+        <div class="post-detail__perex">{{ post.perex|nl2br }}</div>
+        <div class="post-detail__text">{{ post.text|nl2br }}</div>
+
+        <div class="post-detail__comments">
+            <div class="add-comment button button--outlined">Add comment</div>
+            <div class="clear"></div>
+            {% if post.comments is not empty %}
+                {% for comment in post.comments %}
+                    {% include 'elements/comment.html.twig' with {'comment': comment, 'level': 1} only %}
+                {% endfor %}
+            {% endif %}
+        </div>
+    </div>
+    <div id="myModal" class="modal">
+        <div class="modal-content">
+            <span class="close">&times;</span>
+            <form id="comment-form">
+                <label for="author">Author: </label><br>
+                <input type="text" name="author" id="author"><br>
+                <label for="comment">Comment: </label><br>
+                <textarea id="comment" name="text"></textarea><br>
+                <button type="submit" class="button button--outlined">Submit</button>
+            </form>
+            <span class="modal-error"></span>
+        </div>
+
+    </div>
+{% endblock %}
+{% block javascripts %}
+    {{ parent() }}
+    <script>
+        var parentId = null;
+        var modal = $('#myModal');
+        var url = '';
+        function showModal() {
+            modal.show();
+        }
+        function closeModal() {
+            parentId = null;
+            modal.hide();
+        }
+
+        function convertFormToJSON(form) {
+            var array = $(form).serializeArray();
+            var json = {};
+            $.each(array, function () {
+                json[this.name] = this.value || "";
+            });
+            return json;
+        }
+
+        $('#comment-form').on('submit', function (e) {
+            e.preventDefault();
+            var data =  convertFormToJSON('#comment-form');
+            var request = $.ajax({
+                method: "POST",
+                contentType: "application/json",
+                url: url,
+                data: JSON.stringify(data),
+                success: function () {
+                    closeModal();
+                    parentId = null;
+                    window.location.reload();
+                }
+            });
+            request.fail(function (xhr) {
+                var message = xhr.responseJSON.error;
+                if (xhr.status === 429) {
+                    message = "Wooah slow down! " + message;
+                }
+                $('.modal-error').html(message);
+            })
+        });
+
+        $('.close').on('click', closeModal);
+
+        $('.comment__reply').on('click', function () {
+            parentId = $(this).data('id');
+            url = '{{ replyToCommentUrl }}'.replace('-id-', parentId);
+            showModal();
+        });
+
+        $('.add-comment').on('click', function () {
+            url = '{{ addCommentUrl }}';
+            showModal();
+        });
+    </script>
+{% endblock %}
