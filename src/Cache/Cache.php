@@ -45,6 +45,6 @@ class Cache implements CacheInterface
      */
     public function delete(string $key): void
     {
-        $this->cacheAdapter->deleteItem('stats.products_count');
+        $this->cacheAdapter->deleteItem($key);
     }
 }

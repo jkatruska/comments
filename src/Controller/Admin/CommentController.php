@@ -2,9 +2,7 @@
 
 namespace App\Controller\Admin;
 
-use App\Exception\RequestParseException;
 use App\Exception\ValidationException;
-use App\Request\JsonRequestParser;
 use App\Response\Error;
 use App\Service\CommentService;
 use App\Service\PostService;
@@ -53,7 +51,7 @@ class CommentController extends AbstractController
     public function add(Request $request): JsonResponse
     {
         try {
-            $data = JsonRequestParser::parse($request);
+            $data = $request->request->all();
             $slug = $data['slug'] ?? null;
             unset($data['slug']);
             if (!$data || !$slug) {
@@ -61,7 +59,7 @@ class CommentController extends AbstractController
             }
             $this->commentService->addComment($slug, $data);
             return $this->json(null, Response::HTTP_NO_CONTENT);
-        } catch (RequestParseException|ValidationException $invalidRequestException) {
+        } catch (ValidationException $invalidRequestException) {
             return $this->json(Error::new($invalidRequestException->getMessage()), Response::HTTP_BAD_REQUEST);
         }
     }
@@ -75,12 +73,12 @@ class CommentController extends AbstractController
     public function replyToComment(int $id, Request $request): JsonResponse
     {
         try {
-            $data = JsonRequestParser::parse($request);
+            $data = $request->request->all();
             if ($data) {
                 $this->commentService->replyToComment($id, $data);
             }
             return $this->json(null, Response::HTTP_NO_CONTENT);
-        } catch (RequestParseException|ValidationException $invalidRequestException) {
+        } catch (ValidationException $invalidRequestException) {
             return $this->json(Error::new($invalidRequestException->getMessage()), Response::HTTP_BAD_REQUEST);
         }
     }
@@ -105,9 +103,8 @@ class CommentController extends AbstractController
     public function update(Request $request, int $id): JsonResponse
     {
         try {
-            $data = JsonRequestParser::parse($request);
-            $this->commentService->update($id, $data);
-        } catch (RequestParseException|ValidationException $invalidRequestException) {
+            $this->commentService->update($id, $request->request->all());
+        } catch (ValidationException $invalidRequestException) {
             return $this->json(Error::new($invalidRequestException->getMessage()), Response::HTTP_BAD_REQUEST);
         }
         return $this->json(null, Response::HTTP_NO_CONTENT);
