@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Cache;
 
 use Psr\Cache\InvalidArgumentException;
@@ -17,8 +19,8 @@ class Cache implements CacheInterface
 
     /**
      * @param string $key
-     * @return CacheItem
      * @throws InvalidArgumentException
+     * @return CacheItem
      */
     public function get(string $key): CacheItem
     {
@@ -45,6 +47,6 @@ class Cache implements CacheInterface
      */
     public function delete(string $key): void
     {
-        $this->cacheAdapter->deleteItem('stats.products_count');
+        $this->cacheAdapter->deleteItem($key);
     }
 }

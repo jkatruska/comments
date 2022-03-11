@@ -1,11 +1,11 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Controller;
 
 use App\Exception\RateLimitException;
-use App\Exception\RequestParseException;
 use App\Exception\ValidationException;
-use App\Request\JsonRequestParser;
 use App\Response\Error;
 use App\Service\CommentService;
 use App\Service\PostService;
@@ -52,7 +52,7 @@ class PostController extends AbstractController
             [
                 'post' => $post,
                 'addCommentUrl' => $this->generateUrl('post_new_comment', ['slug' => $slug]),
-                'replyToCommentUrl' => $this->generateUrl('comment_reply', ['id' => '-id-'])
+                'replyToCommentUrl' => $this->generateUrl('comment_reply', ['id' => '-id-']),
             ]
         );
     }
@@ -67,17 +67,17 @@ class PostController extends AbstractController
     public function addComment(string $slug, Request $request, RateLimiter $limiter): JsonResponse
     {
         $limiterKey = 'comments.' . $_SERVER['REMOTE_ADDR'];
+
         try {
-            #$limiter->check($limiterKey, RateLimiter::MAX_COMMENTS);
-            $data = JsonRequestParser::parse($request);
+            $limiter->check($limiterKey, RateLimiter::MAX_COMMENTS);
+            $data = $request->request->all();
             if ($data) {
                 $this->commentService->addComment($slug, $data);
             }
-            #$limiter->increment($limiterKey);
             return $this->json(null, Response::HTTP_NO_CONTENT);
         } catch (RateLimitException $limitException) {
-            return $this->json(Error::new('Too many request'), Response::HTTP_TOO_MANY_REQUESTS);
-        } catch (RequestParseException|ValidationException $invalidRequestException) {
+            return $this->json(Error::new($limitException->getMessage()), Response::HTTP_TOO_MANY_REQUESTS);
+        } catch (ValidationException $invalidRequestException) {
             return $this->json(Error::new($invalidRequestException->getMessage()), Response::HTTP_BAD_REQUEST);
         }
     }

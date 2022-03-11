@@ -1,11 +1,11 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Controller;
 
 use App\Exception\RateLimitException;
-use App\Exception\RequestParseException;
 use App\Exception\ValidationException;
-use App\Request\JsonRequestParser;
 use App\Response\Error;
 use App\Service\CommentService;
 use App\Util\RateLimiter;
@@ -37,9 +37,10 @@ class CommentController extends AbstractController
     public function replyToComment(int $id, Request $request, RateLimiter $limiter): JsonResponse
     {
         $limiterKey = 'comments.' . $_SERVER['REMOTE_ADDR'];
+
         try {
             $limiter->check($limiterKey, RateLimiter::MAX_COMMENTS);
-            $data = JsonRequestParser::parse($request);
+            $data = $request->request->all();
             if ($data) {
                 $this->commentService->replyToComment($id, $data);
             }
@@ -47,7 +48,7 @@ class CommentController extends AbstractController
             return $this->json(null, Response::HTTP_NO_CONTENT);
         } catch (RateLimitException $limitException) {
             return $this->json(Error::new($limitException->getMessage()), Response::HTTP_TOO_MANY_REQUESTS);
-        } catch (RequestParseException|ValidationException $invalidRequestException) {
+        } catch (ValidationException $invalidRequestException) {
             return $this->json(Error::new($invalidRequestException->getMessage()), Response::HTTP_BAD_REQUEST);
         }
     }

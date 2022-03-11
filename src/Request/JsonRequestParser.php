@@ -1,27 +1,26 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Request;
 
 use App\Exception\RequestParseException;
 use Symfony\Component\HttpFoundation\Request;
 
-class JsonRequestParser
+class JsonRequestParser implements RequestParserInterface
 {
     /**
      * @param Request $request
-     * @return array|null
      * @throws RequestParseException
      */
-    public static function parse(Request $request): ?array
+    public static function parse(Request $request): void
     {
-        if (!str_contains($request->headers->get('Content-Type'), 'application/json')) {
-            return null;
-        }
-
         $data = json_decode($request->getContent(), true);
         if (json_last_error() !== JSON_ERROR_NONE) {
             throw new RequestParseException();
         }
-        return $data;
+        foreach ($data as $key => $value) {
+            $request->request->set($key, $value);
+        }
     }
 }

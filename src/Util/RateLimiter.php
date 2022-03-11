@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Util;
 
 use App\Cache\CacheInterface;
@@ -7,7 +9,7 @@ use App\Exception\RateLimitException;
 
 class RateLimiter
 {
-    //limits
+    // limits
     public const MAX_COMMENTS = 5;
 
     private CacheInterface $cache;
@@ -25,7 +27,7 @@ class RateLimiter
     {
         $item = $this->cache->get($key);
         $count = $item->isHit() ? (int) $item->get() : 0;
-        $count++;
+        ++$count;
         $this->cache->update($key, (string) $count, $timeout);
     }
 
