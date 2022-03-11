@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Controller;
 
 use App\Exception\RateLimitException;
@@ -50,7 +52,7 @@ class PostController extends AbstractController
             [
                 'post' => $post,
                 'addCommentUrl' => $this->generateUrl('post_new_comment', ['slug' => $slug]),
-                'replyToCommentUrl' => $this->generateUrl('comment_reply', ['id' => '-id-'])
+                'replyToCommentUrl' => $this->generateUrl('comment_reply', ['id' => '-id-']),
             ]
         );
     }
@@ -65,6 +67,7 @@ class PostController extends AbstractController
     public function addComment(string $slug, Request $request, RateLimiter $limiter): JsonResponse
     {
         $limiterKey = 'comments.' . $_SERVER['REMOTE_ADDR'];
+
         try {
             $limiter->check($limiterKey, RateLimiter::MAX_COMMENTS);
             $data = $request->request->all();

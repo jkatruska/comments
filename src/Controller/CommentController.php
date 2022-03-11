@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Controller;
 
 use App\Exception\RateLimitException;
@@ -35,6 +37,7 @@ class CommentController extends AbstractController
     public function replyToComment(int $id, Request $request, RateLimiter $limiter): JsonResponse
     {
         $limiterKey = 'comments.' . $_SERVER['REMOTE_ADDR'];
+
         try {
             $limiter->check($limiterKey, RateLimiter::MAX_COMMENTS);
             $data = $request->request->all();

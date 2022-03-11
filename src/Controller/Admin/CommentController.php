@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Controller\Admin;
 
 use App\Exception\ValidationException;
@@ -38,7 +40,7 @@ class CommentController extends AbstractController
                 'addCommentUrl' => $this->generateUrl('admin_add_comment'),
                 'deleteCommentUrl' => $this->generateUrl('admin_delete_comment', ['id' => '-id-']),
                 'updateCommentUrl' => $this->generateUrl('admin_update_comment', ['id' => '-id-']),
-                'replyToCommentUrl' => $this->generateUrl('admin_reply_comment', ['id' => '-id-'])
+                'replyToCommentUrl' => $this->generateUrl('admin_reply_comment', ['id' => '-id-']),
             ]
         );
     }
@@ -55,7 +57,7 @@ class CommentController extends AbstractController
             $slug = $data['slug'] ?? null;
             unset($data['slug']);
             if (!$data || !$slug) {
-                throw new ValidationException("Missing slug");
+                throw new ValidationException('Missing slug');
             }
             $this->commentService->addComment($slug, $data);
             return $this->json(null, Response::HTTP_NO_CONTENT);

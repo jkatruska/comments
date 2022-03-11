@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Command;
 
 use App\Entity\User;
@@ -42,7 +44,7 @@ class CreateUserCommand extends Command
         $user = new User();
         $user->setUsername($username);
 
-        $password = $this->userPasswordHasher->hashPassword($user,$password);
+        $password = $this->userPasswordHasher->hashPassword($user, $password);
         $user->setPassword($password);
 
         $output->writeln("User $username created successfully!");

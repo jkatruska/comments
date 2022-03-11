@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Cache;
 
 use Psr\Cache\InvalidArgumentException;
@@ -17,8 +19,8 @@ class Cache implements CacheInterface
 
     /**
      * @param string $key
-     * @return CacheItem
      * @throws InvalidArgumentException
+     * @return CacheItem
      */
     public function get(string $key): CacheItem
     {

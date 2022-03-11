@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Service;
 
 use App\Domain\App\Comment;
@@ -100,7 +102,7 @@ class CommentService
     {
         $commentsRepo = $this->em->getRepository(CommentEntity::class);
         $commentsArr = $commentsRepo->getByPost($post);
-        $comments = array_map(fn($comment) => CommentFactory::createFromArray($comment), $commentsArr);
+        $comments = array_map(fn ($comment) => CommentFactory::createFromArray($comment), $commentsArr);
         foreach ($comments as $comment) {
             $this->assignReplies($comment, $comments);
         }
@@ -114,7 +116,7 @@ class CommentService
     {
         $commentsRepo = $this->em->getRepository(CommentEntity::class);
         $commentsArr = $commentsRepo->getAll();
-        $comments = array_map(fn($comment) => CommentFactory::createFromArray($comment), $commentsArr);
+        $comments = array_map(fn ($comment) => CommentFactory::createFromArray($comment), $commentsArr);
         foreach ($comments as $comment) {
             $this->assignReplies($comment, $comments);
         }
@@ -129,7 +131,7 @@ class CommentService
         $constraints = new Collection(
             [
                 'author' => [new NotBlank(), new Length(['max' => 128])],
-                'text' => new NotBlank()
+                'text' => new NotBlank(),
             ]
         );
         $errors = $this->validator->validate($data, $constraints);
@@ -149,7 +151,7 @@ class CommentService
      */
     private function assignReplies(Comment $comment, array &$comments): void
     {
-        $replies = array_filter($comments, fn($entity) => $entity->getParentId() === $comment->getId());
+        $replies = array_filter($comments, fn ($entity) => $entity->getParentId() === $comment->getId());
         if (!$replies) {
             return;
         }

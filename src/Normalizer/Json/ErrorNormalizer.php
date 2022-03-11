@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Normalizer\Json;
 
 use App\Response\Error;
@@ -27,6 +29,6 @@ class ErrorNormalizer implements NormalizerInterface
      */
     public function supportsNormalization(mixed $data, string $format = null): bool
     {
-        return $data instanceof Error && $format === 'json';
+        return $data instanceof Error && 'json' === $format;
     }
 }
