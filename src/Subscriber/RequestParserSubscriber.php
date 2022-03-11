@@ -26,6 +26,8 @@ class RequestParserSubscriber implements EventSubscriberInterface
     {
         $request = $controllerEvent->getRequest();
         $parser = RequestParserFactory::getParser($request);
-        $parser?->parse($request);
+        if ($parser) {
+            $parser::parse($request);
+        }
     }
 }

@@ -30,7 +30,7 @@ class GeneratePostCommand extends Command
     {
         $posts = $this->fetchData('https://techcrunch.com/wp-json/wp/v2/posts?per_page=10&context=embed');
         $posts = json_decode($posts, true);
-        if (JSON_ERROR_NONE !== json_last_error()) {
+        if (json_last_error() !== JSON_ERROR_NONE) {
             $output->writeln('Failed to fetch data from posts API');
             return Command::FAILURE;
         }
@@ -39,7 +39,7 @@ class GeneratePostCommand extends Command
         $text = $this->fetchData('https://baconipsum.com/api/?type=all-meat&paras=2&start-with-lorem=1');
         $text = json_decode($text, true);
 
-        if (JSON_ERROR_NONE !== json_last_error()) {
+        if (json_last_error() !== JSON_ERROR_NONE) {
             $output->writeln('Failed to fetch data from text API');
             return Command::FAILURE;
         }

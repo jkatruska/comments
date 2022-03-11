@@ -70,6 +70,7 @@ $config->setRules([
         'sort_algorithm' => 'none',
     ],
     'phpdoc_no_empty_return' => false,
+    'yoda_style' => false,
 ])
     ->setFinder($finder)
     ->setRiskyAllowed(true);

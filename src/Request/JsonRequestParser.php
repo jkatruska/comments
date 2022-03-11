@@ -16,7 +16,7 @@ class JsonRequestParser implements RequestParserInterface
     public static function parse(Request $request): void
     {
         $data = json_decode($request->getContent(), true);
-        if (JSON_ERROR_NONE !== json_last_error()) {
+        if (json_last_error() !== JSON_ERROR_NONE) {
             throw new RequestParseException();
         }
         foreach ($data as $key => $value) {
