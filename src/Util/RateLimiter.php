@@ -9,9 +9,6 @@ use App\Exception\RateLimitException;
 
 class RateLimiter
 {
-    // limits
-    public const MAX_COMMENTS = 5;
-
     private CacheInterface $cache;
 
     public function __construct(CacheInterface $cache)
@@ -40,7 +37,7 @@ class RateLimiter
     {
         $item = $this->cache->get($key);
         $count = $item->isHit() ? (int) $item->get() : 0;
-        if ($count > $limit) {
+        if ($count >= $limit) {
             throw new RateLimitException();
         }
     }
