@@ -4,11 +4,10 @@ declare(strict_types=1);
 
 namespace App\Controller;
 
-use App\Exception\RateLimitException;
+use App\Annotation\RateLimiter;
 use App\Exception\ValidationException;
 use App\Response\Error;
 use App\Service\CommentService;
-use App\Util\RateLimiter;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -29,25 +28,19 @@ class CommentController extends AbstractController
 
     /**
      * @Route("/comment/{id}/reply", name="comment_reply")
+     * @RateLimiter(name="comments", identifier="ip")
      * @param int
      * @param Request $request
-     * @param RateLimiter $limiter
      * @return JsonResponse
      */
-    public function replyToComment(int $id, Request $request, RateLimiter $limiter): JsonResponse
+    public function replyToComment(int $id, Request $request): JsonResponse
     {
-        $limiterKey = 'comments.' . $_SERVER['REMOTE_ADDR'];
-
         try {
-            $limiter->check($limiterKey, RateLimiter::MAX_COMMENTS);
             $data = $request->request->all();
             if ($data) {
                 $this->commentService->replyToComment($id, $data);
             }
-            $limiter->increment($limiterKey);
             return $this->json(null, Response::HTTP_NO_CONTENT);
-        } catch (RateLimitException $limitException) {
-            return $this->json(Error::new($limitException->getMessage()), Response::HTTP_TOO_MANY_REQUESTS);
         } catch (ValidationException $invalidRequestException) {
             return $this->json(Error::new($invalidRequestException->getMessage()), Response::HTTP_BAD_REQUEST);
         }
