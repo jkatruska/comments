@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Subscriber;
 
 use App\Exception\RateLimitException;
@@ -59,25 +61,16 @@ class RateLimiterSubscriber implements EventSubscriberInterface
 
         $ref = new ReflectionClass($controller);
         $method = $ref->getMethod($method);
-        $isLimited = false;
-        $methodAnnotations = $this->reader->getMethodAnnotations($method);
-        $limiter = null;
+        $limiter = $this->reader->getMethodAnnotation($method, \App\Annotation\RateLimiter::class);
 
-        foreach ($methodAnnotations as $methodAnnotation) {
-            if ($methodAnnotation instanceof \App\Annotation\RateLimiter) {
-                $isLimited = true;
-                $limiter = $methodAnnotation;
-                break;
-            }
-        }
-
-        if (!$isLimited) {
+        if (!$limiter) {
             return;
         }
 
         $key = $limiter->getName() . '.' . $this->getUserIdentifier($limiter->getIdentifier());
         $event->getRequest()->attributes->set('limiterKey', $key);
         $event->getRequest()->attributes->set('limiterTimeout', $limiter->getTimeout());
+
         try {
             $this->rateLimiter->check($key, $limiter->getLimit());
         } catch (RateLimitException $e) {
